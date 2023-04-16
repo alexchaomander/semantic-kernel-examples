@@ -1,0 +1,4 @@
+semantic-kernel
+llama-index
+streamlit
+langchain
