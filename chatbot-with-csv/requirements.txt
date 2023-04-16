@@ -1,0 +1,5 @@
+llama-index
+semantic-kernel
+google_spreadsheet
+google-auth-oauthlib
+pandas
