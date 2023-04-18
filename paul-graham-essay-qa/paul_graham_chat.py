@@ -22,23 +22,6 @@ print("Splitting the text data into chunks...")
 texts = text_splitter.create_documents([document])
 len(texts)
 
-def build_kernel() -> sk.Kernel:
-    # Setup kernel with OpenAI completion and embedding backends
-    api_key, org_id = sk.openai_settings_from_dot_env()
-
-    kernel = (
-        sk.kernel_builder()
-        .configure(lambda c: c.add_text_backend("completion", OpenAITextCompletion("text-davinci-003", api_key, org_id)))
-        .configure(lambda c: c.add_embedding_backend("embeddings", OpenAITextEmbedding("text-embedding-ada-002", api_key, org_id)))
-        .configure(lambda c: c.add_chat_backend("chat-gpt", OpenAIChatCompletion("gpt-3.5-turbo", api_key, org_id)))
-        .with_memory_storage(sk.memory.VolatileMemoryStore())
-        .build()
-    )
-
-    kernel.import_skill(sk.core_skills.TextMemorySkill())
-
-    return kernel
-
 sk_prompt = """
 ChatBot can have a conversation with you about any topic.
 It can give explicit instructions or say 'I don't know' if
@@ -53,7 +36,14 @@ User: {{$user_input}}
 ChatBot: """.strip()
 
 print("Building the kernel...")
-kernel = build_kernel()
+kernel = sk.Kernel()
+
+api_key, org_id = sk.openai_settings_from_dot_env()
+kernel.config.add_text_backend("dv", OpenAITextCompletion("text-davinci-003", api_key, org_id))
+kernel.config.add_embedding_backend("ada", OpenAITextEmbedding("text-embedding-ada-002", api_key, org_id))
+
+kernel.register_memory_store(memory_store=sk.memory.VolatileMemoryStore())
+kernel.import_skill(sk.core_skills.TextMemorySkill())
 
 chat_func = kernel.create_semantic_function(sk_prompt, max_tokens=200, temperature=0.8)
 
@@ -94,7 +84,7 @@ st.sidebar.info(
     )
 
 # Get user input
-user_query = st.text_input("Enter question here, to exit enter :q", "What are Paul's favorite startups to invest in?")
+user_query = st.text_input("Enter question here, to exit enter :q", "What does Paul say you should look for in a cofounder?")
 if user_query != ":q" or user_query != "":
     # Pass the query to the ChatGPT function
     context['user_input'] = user_query
