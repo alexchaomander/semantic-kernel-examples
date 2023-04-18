@@ -1,6 +1,7 @@
 # Chat Interface over Text Data
 Example of creating a simple chat interface over Paul Graham's (founder of YCombinator) essays using the Semantic Kernel.
 
+To run the app:
 `streamlit run paul_graham_chat.py`
 
 
