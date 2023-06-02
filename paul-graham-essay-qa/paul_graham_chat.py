@@ -39,8 +39,8 @@ print("Building the kernel...")
 kernel = sk.Kernel()
 
 api_key, org_id = sk.openai_settings_from_dot_env()
-kernel.config.add_text_backend("dv", OpenAITextCompletion("text-davinci-003", api_key, org_id))
-kernel.config.add_embedding_backend("ada", OpenAITextEmbedding("text-embedding-ada-002", api_key, org_id))
+kernel.add_text_completion_service("dv", OpenAITextCompletion("text-davinci-003", api_key, org_id))
+kernel.add_text_embedding_generation_service("ada", OpenAITextEmbedding("text-embedding-ada-002", api_key, org_id))
 
 kernel.register_memory_store(memory_store=sk.memory.VolatileMemoryStore())
 kernel.import_skill(sk.core_skills.TextMemorySkill())
